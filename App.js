@@ -1,21 +1,28 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { createBottomTabNavigator, createAppContainer } from "react-navigation";
 
-export default class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-      </View>
-    );
-  }
-}
+import Home from "./components/Home";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+import Profile from "./components/Profile";
+
+const TabNavigator = createBottomTabNavigator(
+  {
+    Home,
+    Profile
   },
-});
+  {
+    tabBarOptions: {
+      activeTintColor: "#fff",
+      activeBackgroundColor: "#ead2ac",
+      inactiveTintColor: "#ead2ac",
+      labelStyle: {
+        fontWeight: "bold",
+        marginBottom: 10,
+        fontSize: 24
+      }
+    }
+  }
+);
+
+export default createAppContainer(TabNavigator);
