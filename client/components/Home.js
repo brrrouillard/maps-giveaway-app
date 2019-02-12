@@ -9,8 +9,14 @@ export default class Home extends Component {
     super();
     this.state = {
       userPosition: {
-        lat: 0,
-        lon: 0
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421
+      },
+      region: {
+        latitude: 0,
+        longitude: 0
       },
       loading: true
     };
@@ -22,8 +28,14 @@ export default class Home extends Component {
       this.setState(
         {
           userPosition: {
-            lat: position.coords.latitude,
-            lon: position.coords.longitude
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+          },
+          region: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
           }
         },
         () => {
@@ -52,15 +64,7 @@ export default class Home extends Component {
       return (
         <View style={styles.container}>
           <Header />
-          <MapView
-            style={{ flex: 1 }}
-            initialRegion={{
-              latitude: this.state.userPosition.lat,
-              longitude: this.state.userPosition.lon,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            }}
-          />
+          <MapView style={{ flex: 1 }} region={this.state.userPosition} />
         </View>
       );
     }
@@ -74,8 +78,7 @@ const styles = StyleSheet.create({
   containerLoading: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    
+    alignItems: "center"
   },
   textLoading: {
     fontSize: 64
