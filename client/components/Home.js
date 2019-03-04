@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { MapView } from "expo";
-import axios from "axios";
 
 import Header from "./Header";
 
@@ -19,16 +18,19 @@ export default class Home extends Component {
         latitude: 0,
         longitude: 0
       },
-      itemsMarkers: [
-      ],
-      loading: true
+      itemsMarkers: [],
+      isLoaded: false
     };
   }
 
-  getUserLocation = async () => {
-    await navigator.geolocation.getCurrentPosition(async position => {
+  /**
+   * Get current user location and store it in the state
+   */
+
+  getUserLocation = () => {
+    navigator.geolocation.getCurrentPosition(position => {
       // First we get user location
-      await this.setState({
+      this.setState({
         userPosition: {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -41,21 +43,42 @@ export default class Home extends Component {
         }
       });
     });
-    
-    await axios
-      .get(`localhost:8080/api/items/`)
-      .then(items => {
-        this.setState({ itemsMarker: items });
-      })
-      .catch(err => console.log(err));
-    await this.setState({ loading: false });
   };
 
- componentDidMount() {
-    this.getUserLocation();
+  /**
+   * Get nearby items and store them in the state
+   */
+
+  getNearItems() {
+    fetch("http://10.70.0.48:8080/api/items/")
+      .then(res => res.json())
+      .then(data => this.setState({ itemsMarkers: data, isLoaded: true }));
   }
+
+  /**
+   * Render every markers in the itemsMarkers state array
+   */
+
+  renderMarkers() {
+    return this.state.itemsMarkers.map((item, index) => (
+      <MapView.Marker
+        key={index}
+        title={item.name}
+        coordinate={{
+          latitude: item.location.coordinates[1],
+          longitude: item.location.coordinates[0]
+        }}
+      />
+    ));
+  }
+
+  componentDidMount() {
+    this.getUserLocation();
+    this.getNearItems();
+  }
+
   render() {
-    if (this.state.loading) {
+    if (!this.state.isLoaded) {
       return (
         <View style={styles.container}>
           <Header />
@@ -68,8 +91,11 @@ export default class Home extends Component {
       return (
         <View style={styles.container}>
           <Header />
-          <Text></Text>
-          <MapView style={{ flex: 1 }} region={this.state.userPosition} />
+          <Text>{this.state.itemsMarkers.length}</Text>
+          <Text />
+          <MapView style={{ flex: 1 }} region={this.state.userPosition}>
+            {this.renderMarkers()}
+          </MapView>
         </View>
       );
     }
