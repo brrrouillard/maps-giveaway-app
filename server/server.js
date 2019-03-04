@@ -26,6 +26,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const itemsRouter = require("./api/items");
 app.use("/api/items", itemsRouter);
 
+const usersRouter = require("./api/users");
+app.use("/api/users", usersRouter);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
