@@ -2,14 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator, createAppContainer } from "react-navigation";
 
-import Home from "./components/Home";
+import Map from "./components/Map";
 
-import Profile from "./components/Profile";
+import MyItems from "./components/MyItems";
 
 const TabNavigator = createBottomTabNavigator(
   {
-    Home,
-    Profile
+    Map,
+    MyItems
   },
   {
     tabBarOptions: {

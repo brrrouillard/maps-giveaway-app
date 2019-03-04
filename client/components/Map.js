@@ -4,7 +4,7 @@ import { MapView } from "expo";
 
 import Header from "./Header";
 
-export default class Home extends Component {
+export default class Map extends Component {
   constructor() {
     super();
     this.state = {
@@ -19,8 +19,18 @@ export default class Home extends Component {
         longitude: 0
       },
       itemsMarkers: [],
-      isLoaded: false
+      isLoaded: false,
+      showAddItemPopup: false, 
+      addItemCoordinates: {} // Stores coordinates needed to add a new item
     };
+  }
+
+  /**
+   * Used to synchronize state with user's view
+   */
+
+  onRegionChange(region) {
+    this.setState({ region });
   }
 
   /**
@@ -68,8 +78,18 @@ export default class Home extends Component {
           latitude: item.location.coordinates[1],
           longitude: item.location.coordinates[0]
         }}
+        description={item.description}
       />
     ));
+  }
+
+  handleMapPress(e) {
+    const coordinates = {
+      latitude: e.coordinate.latitude,
+      longitude: e.coordinate.longitude
+    };
+    this.setState({ showAddItemPopup: true, addItemCoordinates: coordinates });
+    
   }
 
   componentDidMount() {
@@ -79,6 +99,7 @@ export default class Home extends Component {
 
   render() {
     if (!this.state.isLoaded) {
+      // Loading screen
       return (
         <View style={styles.container}>
           <Header />
@@ -91,10 +112,13 @@ export default class Home extends Component {
       return (
         <View style={styles.container}>
           <Header />
-          <Text>{this.state.itemsMarkers.length}</Text>
-          <Text />
-          <MapView style={{ flex: 1 }} region={this.state.userPosition}>
+          <MapView
+            style={{ flex: 1 }}
+            region={this.state.userPosition}
+            onPress={e => this.handleMapPress(e.nativeEvent)}
+          >
             {this.renderMarkers()}
+            {this.state.showAddItemPopup && this.renderAddItemMarker()}
           </MapView>
         </View>
       );
